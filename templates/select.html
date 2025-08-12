@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Selecciona formato</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+
+        <!-- Vista previa -->
+        <div class="card mb-4 shadow-sm">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{ thumbnail }}" class="img-fluid rounded-start" alt="Miniatura">
+                </div>
+                <div class="col-md-8 d-flex flex-column justify-content-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ title }}</h5>
+                        <p class="card-text text-muted">Selecciona la resolución y el formato para descargar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de descarga -->
+        <div class="card shadow-sm p-4">
+            <form action="/download" method="post" onsubmit="showProgress()">
+                <input type="hidden" name="url" value="{{ url }}">
+                <div class="form-outline mb-4">
+                    <select name="format_id" class="form-select" required>
+                        {% for f in formats %}
+                        <option value="{{ f.format_id }}">
+                            {{ f.resolution }} ({{ f.ext }}) - {{ f.filesize }} MB
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success btn-lg w-100">Descargar</button>
+            </form>
+        </div>
+
+        <!-- Barra de progreso oculta -->
+        <div id="progress" class="mt-4" style="display:none;">
+            <p>Descargando video...</p>
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                     role="progressbar" style="width: 0%"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showProgress() {
+            document.getElementById('progress').style.display = 'block';
+            let bar = document.getElementById('progress-bar');
+            let width = 0;
+            let interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width += 5;
+                    bar.style.width = width + "%";
+                }
+            }, 500);
+        }
+    </script>
+</body>
+</html>
